@@ -17,7 +17,6 @@
     <script src="./qrcode.js"></script>
     <script>
       function urlToObject(url) {
-        url = decodeURIComponent(url);
         var urlObject = {};
         if (/\?/.test(url)) {
           var urlString = url.substring(url.indexOf("?") + 1);
@@ -33,7 +32,7 @@
       let obj = urlToObject(location.href);
       QRCode.toCanvas(
         document.getElementById("canvas"),
-        obj.data || "Hello World!",
+        obj.data ? decodeURIComponent(obj.data) : "Hello World!",
         { toSJISFunc: QRCode.toSJIS },
         function (error) {
           if (error) console.error(error);
