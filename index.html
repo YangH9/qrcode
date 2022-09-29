@@ -12,7 +12,8 @@
     <center>
       <h1>二维码生成——精简版</h1>
       <div>地址栏'data'为二维码参数,默认:Hello World!</div>
-      <canvas id="canvas"></canvas>
+      <img id="img" src="" alt="" />
+      <canvas id="canvas" style="display: none"></canvas>
     </center>
     <script src="./qrcode.js"></script>
     <script>
@@ -37,6 +38,9 @@
         function (error) {
           if (error) console.error(error);
           console.log("success!");
+          document.getElementById("img").src = document
+            .getElementById("canvas")
+            .toDataURL();
         }
       );
     </script>
