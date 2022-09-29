@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="二维码生成——精简版" />
+    <meta name="description" content="二维码生成——精简版" />
+    <title>二维码生成——精简版</title>
+  </head>
+  <body>
+    <center>
+      <h1>二维码生成——精简版</h1>
+      <div>地址栏'data'为二维码参数,默认:Hello World!</div>
+      <canvas id="canvas"></canvas>
+    </center>
+    <script src="/qrcode.js"></script>
+    <script>
+      function urlToObject(url) {
+        url = decodeURIComponent(url);
+        var urlObject = {};
+        if (/\?/.test(url)) {
+          var urlString = url.substring(url.indexOf("?") + 1);
+          var urlArray = urlString.split("&");
+          for (var i = 0, len = urlArray.length; i < len; i++) {
+            var urlItem = urlArray[i];
+            var item = urlItem.split("=");
+            urlObject[item[0]] = item[1];
+          }
+        }
+        return urlObject;
+      }
+      let obj = urlToObject(location.href);
+      QRCode.toCanvas(
+        document.getElementById("canvas"),
+        obj.data || "Hello World!",
+        { toSJISFunc: QRCode.toSJIS },
+        function (error) {
+          if (error) console.error(error);
+          console.log("success!");
+        }
+      );
+    </script>
+  </body>
+</html>
