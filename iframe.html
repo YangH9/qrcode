@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="二维码生成——iframe" />
+    <meta name="description" content="二维码生成——iframe" />
+    <title>二维码生成——iframe</title>
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
+      img {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <img id="img" src="" alt="" />
+    <canvas id="canvas" style="display: none"></canvas>
+    <script src="./qrcode.js"></script>
+    <script src="./qrcode.tosjis.js"></script>
+    <script>
+      function urlToObject(paramString) {
+        let paramObj = {};
+        if (/\?/.test(paramString)) {
+          paramString = paramString.substring(paramString.indexOf("?") + 1);
+        }
+        let paramList = paramString.split("&");
+        paramList.forEach((value) => {
+          let item = value.split("=");
+          item[0] && (paramObj[item[0]] = decodeURIComponent(item[1]));
+        });
+        return paramObj;
+      }
+      window.onload = () => {
+        let obj = urlToObject(location.href);
+        obj.size =
+          obj.size ||
+          [document.body.clientWidth, document.body.clientHeight].sort()[0];
+        QRCode.toCanvas(
+          document.querySelector("#canvas"),
+          obj.param ?? "Hello World!",
+          { toSJISFunc: QRCode.toSJIS, width: obj.size, height: obj.size },
+          function (error) {
+            if (error) console.error(error);
+            console.log("success!");
+            document.querySelector("#img").src = document
+              .querySelector("#canvas")
+              .toDataURL();
+          }
+        );
+      };
+    </script>
+  </body>
+</html>
