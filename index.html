@@ -11,38 +11,90 @@
   <body>
     <center>
       <h1>二维码生成——精简版</h1>
-      <div>地址栏'data'为二维码参数,默认:Hello World!</div>
-      <img id="img" src="" alt="" />
-      <canvas id="canvas" style="display: none"></canvas>
+      <div>
+        <form>
+          <fieldset style="display: inline-block">
+            <legend>自定义</legend>
+            <p>
+              <label for="param">二维码内容:</label>
+              <input id="param" type="text" name="param" value="Hello World!" />
+            </p>
+            <p>
+              <label for="size">图片大小(px):</label>
+              <input id="size" type="number" name="size" value="120" />
+            </p>
+            <button type="button">生成</button>
+          </fieldset>
+        </form>
+      </div>
+      <iframe src="iframe.html" frameborder="0"></iframe>
     </center>
-    <script src="./qrcode.js"></script>
     <script>
-      function urlToObject(url) {
-        var urlObject = {};
-        if (/\?/.test(url)) {
-          var urlString = url.substring(url.indexOf("?") + 1);
-          var urlArray = urlString.split("&");
-          for (var i = 0, len = urlArray.length; i < len; i++) {
-            var urlItem = urlArray[i];
-            var item = urlItem.split("=");
-            urlObject[item[0]] = item[1];
-          }
+      function urlToObject(paramString) {
+        let paramObj = {};
+        if (/\?/.test(paramString)) {
+          paramString = paramString.substring(paramString.indexOf("?") + 1);
         }
-        return urlObject;
+        let paramList = paramString.split("&");
+        paramList.forEach((value) => {
+          let item = value.split("=");
+          item[0] && (paramObj[item[0]] = decodeURIComponent(item[1]));
+        });
+        return paramObj;
       }
+      function objectToUrl(paramObj) {
+        console.log(paramObj);
+        if (paramObj == null) return "";
+        let paramList = [];
+        Object.keys(paramObj) &&
+          Object.keys(paramObj).forEach((key) => {
+            let val = paramObj[key];
+            if (val && val.constructor === Array) {
+              val.forEach((_val) => {
+                paramList.push(`${key}=${encodeURIComponent(_val)}`);
+              });
+            } else {
+              paramList.push(`${key}=${encodeURIComponent(val)}`);
+            }
+          });
+        return paramList.join("&");
+      }
+    </script>
+    <script>
+      let baseUrl = "iframe.html";
+      let iframe = document.querySelector("iframe");
+      let button = document.querySelector("button");
+      let param = document.querySelector("#param");
+      let size = document.querySelector("#size");
+      // 初始化
+
       let obj = urlToObject(location.href);
-      QRCode.toCanvas(
-        document.getElementById("canvas"),
-        obj.data ? decodeURIComponent(obj.data) : "Hello World!",
-        { toSJISFunc: QRCode.toSJIS },
-        function (error) {
-          if (error) console.error(error);
-          console.log("success!");
-          document.getElementById("img").src = document
-            .getElementById("canvas")
-            .toDataURL();
-        }
-      );
+      let data = {
+        param: obj.param || "Hello World!",
+        size: obj.size || 120,
+      };
+      param.value = data.param;
+      size.value = data.size;
+      iframe.src = `${baseUrl}?${objectToUrl(data)}`;
+      iframe.width = data.size;
+      iframe.height = data.size;
+
+      function setIframe() {
+        let data = {
+          param: param.value,
+          size: size.value,
+        };
+        iframe.src = `${baseUrl}?${objectToUrl(data)}`;
+        iframe.width = data.size;
+        iframe.height = data.size;
+        let url = `${window.location.href.split("?")[0]}?${objectToUrl(data)}`;
+        history.pushState("", "", url);
+      }
+
+      button.addEventListener("click", () => {
+        console.log("click");
+        setIframe();
+      });
     </script>
   </body>
 </html>
