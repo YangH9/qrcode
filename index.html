@@ -11,6 +11,7 @@
   <body>
     <center>
       <h1>二维码生成——精简版</h1>
+      <h3>（能跑就行）</h3>
       <div>
         <form>
           <fieldset style="display: inline-block">
@@ -43,7 +44,6 @@
         return paramObj;
       }
       function objectToUrl(paramObj) {
-        console.log(paramObj);
         if (paramObj == null) return "";
         let paramList = [];
         Object.keys(paramObj) &&
@@ -66,12 +66,12 @@
       let button = document.querySelector("button");
       let param = document.querySelector("#param");
       let size = document.querySelector("#size");
-      // 初始化
 
+      // 初始化
       let obj = urlToObject(location.href);
       let data = {
         param: obj.param || "Hello World!",
-        size: obj.size || 120,
+        size: obj.size || 360,
       };
       param.value = data.param;
       size.value = data.size;
@@ -92,7 +92,6 @@
       }
 
       button.addEventListener("click", () => {
-        console.log("click");
         setIframe();
       });
     </script>
